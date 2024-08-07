@@ -8,6 +8,17 @@ class CalendarModel with ChangeNotifier {
   int _currentPageIndex = 500;
   bool _isBlinking = false; // 선택한 날짜가 깜빡이는지 여부
 
+  final Map<DateTime, String> _holidays = {
+    DateTime(DateTime.now().year, 1, 1): "새해",
+    DateTime(DateTime.now().year, 3, 1): "삼일절",
+    DateTime(DateTime.now().year, 5, 5): "어린이날",
+    DateTime(DateTime.now().year, 6, 6): "현충일",
+    DateTime(DateTime.now().year, 8, 15): "광복절",
+    DateTime(DateTime.now().year, 10, 3): "개천절",
+    DateTime(DateTime.now().year, 12, 25): "성탄절",
+    // 필요한 공휴일을 여기에 추가
+  };
+
   DateTime get currentDate => _currentDate;
   DateTime get selectedDate => _selectedDate;
   DateTime? get dragStartDate => _dragStartDate;
@@ -77,6 +88,10 @@ class CalendarModel with ChangeNotifier {
     } else {
       return !dayDate.isBefore(endDate) && !dayDate.isAfter(startDate);
     }
+  }
+
+  bool isHoliday(DateTime date) {
+    return _holidays.containsKey(DateTime(date.year, date.month, date.day));
   }
 
   void updateCurrentDateByPageIndex(int pageIndex) {

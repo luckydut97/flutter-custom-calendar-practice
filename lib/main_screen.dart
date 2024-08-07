@@ -1,4 +1,3 @@
-// main_screen.dart
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
@@ -97,7 +96,8 @@ class CalendarMonth extends StatelessWidget {
       bool isSelected = model.isSelectedDate(dayDate);
       bool isInDragRange = model.isInDragRange(dayDate);
       bool isToday = model.isToday(dayDate);
-      Color textColor = (dayDate.weekday % 7 == 0) ? Colors.red : Colors.black;
+      bool isHoliday = model.isHoliday(dayDate);
+      Color textColor = isHoliday ? Colors.red : (dayDate.weekday % 7 == 0) ? Colors.red : Colors.black;
 
       dayWidgets.add(
         GestureDetector(
