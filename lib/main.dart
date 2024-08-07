@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:intl/date_symbol_data_local.dart'; // 지역화 데이터 초기화용
+import 'package:intl/date_symbol_data_local.dart';
 import 'calendar_model.dart';
 import 'main_screen.dart';
 
 void main() {
+  // 지역화 데이터 초기화 후 앱 실행
   initializeDateFormatting().then((_) {
     runApp(
       ChangeNotifierProvider(
