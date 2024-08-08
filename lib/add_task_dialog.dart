@@ -14,10 +14,14 @@ class AddTaskDialog extends StatefulWidget {
 
 class _AddTaskDialogState extends State<AddTaskDialog> {
   List<String> _tasks = [];
+  List<bool> _selectedTasks = [];
+  List<bool> _completedTasks = [];
 
   void _addTask(String task) {
     setState(() {
       _tasks.add(task);
+      _selectedTasks.add(false);
+      _completedTasks.add(false);
     });
   }
 
@@ -27,9 +31,26 @@ class _AddTaskDialogState extends State<AddTaskDialog> {
     });
   }
 
-  void _removeTask(int index) {
+  void _removeSelectedTasks() {
     setState(() {
-      _tasks.removeAt(index);
+      for (int i = _tasks.length - 1; i >= 0; i--) {
+        if (_selectedTasks[i]) {
+          _tasks.removeAt(i);
+          _selectedTasks.removeAt(i);
+          _completedTasks.removeAt(i);
+        }
+      }
+    });
+  }
+
+  void _completeSelectedTasks() {
+    setState(() {
+      for (int i = 0; i < _tasks.length; i++) {
+        if (_selectedTasks[i]) {
+          _completedTasks[i] = !_completedTasks[i];
+          _selectedTasks[i] = false; // 완료 후 선택 해제
+        }
+      }
     });
   }
 
@@ -81,62 +102,84 @@ class _AddTaskDialogState extends State<AddTaskDialog> {
   @override
   Widget build(BuildContext context) {
     return Dialog(
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(12.0),
-      ),
       child: Container(
         width: MediaQuery.of(context).size.width * 0.8,
         height: MediaQuery.of(context).size.height * 0.6,
         padding: EdgeInsets.all(16.0),
-        color: Colors.white,
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(20.0), // Dialog (Container)의 모서리를 둥글게 설정
+        ),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            Text(
-              DateFormat('M월 d일 (E)', 'ko_KR').format(widget.selectedDate), // 년도 없이 표시
-              style: TextStyle(
-                fontSize: 18,
-                fontWeight: FontWeight.bold,
-              ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(
+                  DateFormat('M월 d일 (E)', 'ko_KR').format(widget.selectedDate),
+                  style: TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                Row(
+                  children: [
+                    IconButton(
+                      icon: Icon(Icons.check_circle),
+                      onPressed: _completeSelectedTasks,
+                    ),
+                    IconButton(
+                      icon: Icon(Icons.delete),
+                      onPressed: _removeSelectedTasks,
+                    ),
+                  ],
+                ),
+              ],
             ),
             SizedBox(height: 16.0),
             Expanded(
               child: ListView.builder(
                 itemCount: _tasks.length,
                 itemBuilder: (context, index) {
-                  return Dismissible(
-                    key: Key(_tasks[index]),
-                    background: Container(
-                      color: Colors.red,
-                      alignment: Alignment.centerLeft,
-                      padding: EdgeInsets.symmetric(horizontal: 20.0),
-                      child: Icon(
-                        Icons.delete,
-                        color: Colors.white,
-                      ),
-                    ),
-                    direction: DismissDirection.endToStart,
-                    onDismissed: (direction) {
-                      _removeTask(index);
-                    },
-                    child: Container(
-                      margin: EdgeInsets.only(bottom: 8.0),
-                      child: ElevatedButton(
-                        onPressed: () => _showTaskInputDialog(index: index),
-                        child: Align(
-                          alignment: Alignment.centerLeft,
-                          child: Text(_tasks[index]),
-                        ),
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.lightBlueAccent.withOpacity(0.2),
-                          foregroundColor: Colors.black,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(12.0),
+                  return Container(
+                    margin: EdgeInsets.only(bottom: 8.0),
+                    child: Row(
+                      children: [
+                        Expanded(
+                          child: ElevatedButton(
+                            onPressed: () => _showTaskInputDialog(index: index),
+                            child: Align(
+                              alignment: Alignment.centerLeft,
+                              child: Text(
+                                _tasks[index],
+                                style: TextStyle(
+                                  decoration: _completedTasks[index]
+                                      ? TextDecoration.lineThrough
+                                      : TextDecoration.none,
+                                ),
+                              ),
+                            ),
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: Colors.lightGreenAccent.withOpacity(0.2),
+                              foregroundColor: Colors.black,
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(12.0),
+                              ),
+                              padding: EdgeInsets.symmetric(vertical: 16.0, horizontal: 12.0),
+                            ),
                           ),
-                          padding: EdgeInsets.symmetric(vertical: 16.0, horizontal: 12.0),
                         ),
-                      ),
+                        Checkbox(
+                          value: _selectedTasks[index],
+                          onChanged: (bool? value) {
+                            setState(() {
+                              _selectedTasks[index] = value ?? false;
+                            });
+                          },
+                        ),
+                      ],
                     ),
                   );
                 },
@@ -145,7 +188,7 @@ class _AddTaskDialogState extends State<AddTaskDialog> {
             SizedBox(height: 16.0),
             ElevatedButton(
               style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.grey[300], // 버튼 배경색
+                backgroundColor: Colors.grey[300],
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(12.0),
                 ),

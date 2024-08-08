@@ -146,7 +146,7 @@ class CalendarMonth extends StatelessWidget {
       margin: EdgeInsets.all(0),
       decoration: BoxDecoration(
         border: Border.all(color: Colors.transparent),
-        color: isSelected || isInDragRange ? Colors.grey.withOpacity(0.5) : Colors.transparent,
+        color: isSelected || isInDragRange ? Colors.blue.withOpacity(0.2) : Colors.transparent,
       ),
       child: Stack(
         children: [
