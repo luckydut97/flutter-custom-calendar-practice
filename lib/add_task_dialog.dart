@@ -17,6 +17,7 @@ class _AddTaskDialogState extends State<AddTaskDialog> {
   List<bool> _selectedTasks = [];
   List<bool> _completedTasks = [];
 
+  // 할 일 추가
   void _addTask(String task) {
     setState(() {
       _tasks.add(task);
@@ -25,12 +26,14 @@ class _AddTaskDialogState extends State<AddTaskDialog> {
     });
   }
 
+  // 할 일 수정
   void _editTask(int index, String newTask) {
     setState(() {
       _tasks[index] = newTask;
     });
   }
 
+  // 선택된 할 일 삭제
   void _removeSelectedTasks() {
     setState(() {
       for (int i = _tasks.length - 1; i >= 0; i--) {
@@ -43,6 +46,7 @@ class _AddTaskDialogState extends State<AddTaskDialog> {
     });
   }
 
+  // 선택된 할 일 완료
   void _completeSelectedTasks() {
     setState(() {
       for (int i = 0; i < _tasks.length; i++) {
@@ -54,6 +58,7 @@ class _AddTaskDialogState extends State<AddTaskDialog> {
     });
   }
 
+  // 할 일 입력 다이얼로그 표시
   Future<void> _showTaskInputDialog({int? index}) async {
     String initialText = index != null ? _tasks[index] : '';
     TextEditingController controller = TextEditingController(text: initialText);
